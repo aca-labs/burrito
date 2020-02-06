@@ -11,7 +11,7 @@ Includes implementations of:
 - [ ] List
 - [ ] State
 
-And abstract interface for:
+And abstract interfaces for:
 - [x] Functor
 - [ ] Applicative
 - [x] Monad
@@ -30,7 +30,7 @@ And abstract interface for:
 
 ## Usage
 
-Docs are built live and published with every release. For the latest, refer to
+Docs build and publish live. For the latest, see
 https://aca-labs.github.io/burrito.
 
 ## Contributing
