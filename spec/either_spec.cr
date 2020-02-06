@@ -94,8 +94,7 @@ describe Either do
 
     context "when right" do
       it "applies the passed block" do
-        x = right.bind { |x| Either.unit(x.to_f) }
-        x.should be_a(Either::Right(Float64))
+        right.bind { |x| Either.unit(x.to_f) }.should be_a(Either::Right(Float64))
       end
     end
   end
