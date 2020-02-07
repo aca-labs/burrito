@@ -69,7 +69,7 @@ describe Either do
 
   describe "#fmap" do
     context "when left" do
-      it "applies the type associated with the block" do
+      it "applies the type associated with the block to the right side" do
         left.fmap { |_x| "foo" }.should be_a(Either(String, String))
       end
 
@@ -87,8 +87,8 @@ describe Either do
 
   describe "#bind" do
     context "when left" do
-      it "applies the type associated with the block" do
-        left.bind { |_x| Either.unit("foo") }.should be_a(Either(Nil, String))
+      it "applies the right type associated with the block" do
+        left.bind { |_x| Either.unit("foo") }.should be_a(Either(String, String))
       end
 
       it "bypasses execution of the block" do
