@@ -79,7 +79,7 @@ abstract struct Either(A, B)
       block.call @value
     end
 
-    def fold(a : A -> T, b : B -> T) : T forall A, T
+    def fold(a : A -> T, b : B -> T) : T forall T
       b.call @value
     end
   end
