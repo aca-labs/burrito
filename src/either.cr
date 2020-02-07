@@ -29,6 +29,9 @@ abstract struct Either(A, B)
   # Extract the wrapped value, or return nil in the case of a Left.
   abstract def value? : B?
 
+  # Apply *a* if the instance is a Left, or *b* in the case of a right.
+  abstract def fold(a : A -> T, b : B -> T) : T forall T
+
   struct Left(T) < Either(T, Nil)
     def initialize(@value : T); end
 
@@ -51,6 +54,10 @@ abstract struct Either(A, B)
     def bind(&block : T -> _) : Left(T)
       self
     end
+
+    def fold(a : T -> U, b : _ -> U) : U forall U
+      a.call @value
+    end
   end
 
   struct Right(T) < Either(Nil, T)
@@ -70,6 +77,10 @@ abstract struct Either(A, B)
 
     def bind(&block : T -> Either(U, V)) : Either(U, V) forall U, V
       block.call @value
+    end
+
+    def fold(a : _ -> U, b : T -> U) : U forall U
+      b.call @value
     end
   end
 end

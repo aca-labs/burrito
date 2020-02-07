@@ -98,4 +98,21 @@ describe Either do
       end
     end
   end
+
+  describe "#fold" do
+    a = ->(_x : String) { "a" }
+    b = ->(_x : Int32) { "b" }
+
+    context "when left" do
+      it "applies a" do
+        left.fold(a, b).should eq("a")
+      end
+    end
+
+    context "when right" do
+      it "applies b" do
+        right.fold(a, b).should eq("b")
+      end
+    end
+  end
 end
