@@ -11,8 +11,8 @@ abstract struct Either(A, B)
   include Monad(B)
 
   # Creates a new `Either` by wrapping the passed value.
-  def self.unit(x : B) : Right(B)
-    Right.new x
+  def self.unit(x : B) : Either(Nil, B)
+    Right(Nil, B).new x
   end
 
   # Extract the wrapped value.
@@ -32,11 +32,11 @@ abstract struct Either(A, B)
   # Apply *a* if the instance is a Left, or *b* in the case of a right.
   abstract def fold(a : A -> T, b : B -> T) : T forall T
 
-  struct Left(T) < Either(T, Nil)
-    def initialize(@value : T); end
+  struct Left(A, B) < Either(A, B)
+    def initialize(@value : A); end
 
     def value! : NoReturn
-      {% if T <= Exception %}
+      {% if A <= Exception %}
         raise @value
       {% else %}
         raise "Error unwrapping value from #{self}: #{@value}"
@@ -47,39 +47,39 @@ abstract struct Either(A, B)
       nil
     end
 
-    def fmap(&block : T -> _) : Left(T)
-      self
+    def fmap(&block : B -> T) : Either(A, T) forall T
+      Left(A, T).new @value
     end
 
-    def bind(&block : T -> _) : Left(T)
-      self
+    def bind(&block : B -> Either(T, U)) : Either(A, U) forall T, U
+      Left(A, U).new @value
     end
 
-    def fold(a : T -> U, b : _ -> U) : U forall U
+    def fold(a : A -> T, b : B -> T) : T forall T
       a.call @value
     end
   end
 
-  struct Right(T) < Either(Nil, T)
-    def initialize(@value : T); end
+  struct Right(A, B) < Either(A, B)
+    def initialize(@value : B); end
 
-    def value! : T
+    def value! : B
       @value
     end
 
-    def value? : T
+    def value? : B
       @value
     end
 
-    def fmap(&block : T -> U) : Right(U) forall U
-      Either.unit block.call(@value)
+    def fmap(&block : B -> T) : Either(A, T) forall T
+      Right(A, T).new block.call(@value)
     end
 
-    def bind(&block : T -> Either(U, V)) : Either(U, V) forall U, V
+    def bind(&block : B -> Either(T, U)) : Either(T, U) forall T, U
       block.call @value
     end
 
-    def fold(a : _ -> U, b : T -> U) : U forall U
+    def fold(a : A -> T, b : B -> T) : T forall A, T
       b.call @value
     end
   end
