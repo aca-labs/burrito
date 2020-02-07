@@ -14,7 +14,8 @@ module Monad(T)
       end
     {% end %}
   end
-  # abstract def self.unit(x : T) : self
+  # Inject a value into the monadic type.
+  # abstract def self.unit(a : T) : self
 
   abstract def bind(&block : T -> Monad(U)) : Monad(U) forall U
 end
