@@ -15,6 +15,24 @@ abstract struct Either(A, B)
     Right(Nil, B).new x
   end
 
+  # Creates a new `Either` with *x* stored on the left.
+  def self.left(x : A) : Either(A, B)
+    Left(A, B).new x
+  end
+
+  # Creates a new `Either` with *x* stored on the right.
+  def self.right(x : B) : Either(A, B)
+    Right(A, B).new x
+  end
+
+  # Returns `true` is this is a Left.
+  abstract def left? : Bool
+
+  # Returns `true` if this is a Right.
+  def right? : Bool
+    !left?
+  end
+
   # Extract the wrapped value.
   #
   # The value will be provided as a union of the Left and Right types. These may
@@ -32,8 +50,12 @@ abstract struct Either(A, B)
   # Apply *a* if the instance is a Left, or *b* in the case of a right.
   abstract def fold(a : A -> T, b : B -> T) : T forall T
 
-  struct Left(A, B) < Either(A, B)
+  private struct Left(A, B) < Either(A, B)
     def initialize(@value : A); end
+
+    def left? : Bool
+      true
+    end
 
     def value! : NoReturn
       {% if A <= Exception %}
@@ -60,8 +82,12 @@ abstract struct Either(A, B)
     end
   end
 
-  struct Right(A, B) < Either(A, B)
+  private struct Right(A, B) < Either(A, B)
     def initialize(@value : B); end
+
+    def left? : Bool
+      false
+    end
 
     def value! : B
       @value

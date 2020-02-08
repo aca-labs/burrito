@@ -10,8 +10,24 @@ describe Either do
     end
   end
 
-  left = Either::Left(String, Int32).new "oh noes!"
-  right = Either::Right(String, Int32).new 42
+  describe ".left" do
+    it "creates an Either::Left" do
+      x = Either(String, Int32).left "testing"
+      x.should be_a(Either(String, Int32))
+      x.left?.should be_true
+    end
+  end
+
+  describe ".right" do
+    it "creates an Either::Right" do
+      x = Either(String, Int32).right 42
+      x.should be_a(Either(String, Int32))
+      x.right?.should be_true
+    end
+  end
+
+  left = Either(String, Int32).left "oh noes!"
+  right = Either(String, Int32).right 42
 
   describe "#value" do
     it "provides the value as a union of left and right types" do
@@ -39,7 +55,7 @@ describe Either do
       end
 
       it "raises custom exceptions if available" do
-        failed_io = Either::Left(IO::Error, Nil).new IO::Error.new
+        failed_io = Either(IO::Error, Nil).left IO::Error.new
         expect_raises(IO::Error) { failed_io.value! }
       end
     end
