@@ -41,6 +41,8 @@ abstract struct Either(A, B)
     @value
   end
 
+  def_equals_and_hash @value
+
   # Extract the wrapped value, throwing an exception if the instance is a Left.
   abstract def value! : B
 

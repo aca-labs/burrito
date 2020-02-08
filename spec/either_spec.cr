@@ -83,6 +83,18 @@ describe Either do
     end
   end
 
+  describe "==" do
+    l = ->(x : String) { Either(String, String).left x }
+    r = ->(x : String) { Either(String, String).right x }
+
+    (l.call("foo") == l.call("foo")).should be_true
+    (r.call("foo") == r.call("foo")).should be_true
+    (l.call("foo") == l.call("bar")).should be_false
+    (r.call("foo") == r.call("bar")).should be_false
+    (l.call("foo") == r.call("foo")).should be_false
+    (r.call("foo") == l.call("foo")).should be_false
+  end
+
   describe "#fmap" do
     context "when left" do
       it "applies the type associated with the block to the right side" do
