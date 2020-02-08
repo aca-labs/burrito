@@ -25,6 +25,8 @@ abstract struct Either(A, B)
     Right(A, B).new x
   end
 
+  def_equals_and_hash @value
+
   # Returns `true` is this is a Left.
   abstract def left? : Bool
 
@@ -37,11 +39,7 @@ abstract struct Either(A, B)
   #
   # The value will be provided as a union of the Left and Right types. These may
   # then be parsed externally as required.
-  def value : A | B
-    @value
-  end
-
-  def_equals_and_hash @value
+  abstract def value : A | B
 
   # Extract the wrapped value, throwing an exception if the instance is a Left.
   abstract def value! : B
@@ -57,6 +55,10 @@ abstract struct Either(A, B)
 
     def left? : Bool
       true
+    end
+
+    def value : A | B
+      @value
     end
 
     def value! : NoReturn
@@ -89,6 +91,10 @@ abstract struct Either(A, B)
 
     def left? : Bool
       false
+    end
+
+    def value : A | B
+      @value
     end
 
     def value! : B
