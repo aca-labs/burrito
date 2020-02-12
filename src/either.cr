@@ -73,12 +73,16 @@ abstract struct Either(A, B)
       nil
     end
 
+    def left_value : A
+      @value
+    end
+
     def fmap(&block : B -> T) : Either(A, T) forall T
       Left(A, T).new @value
     end
 
-    def bind(&block : B -> Either(T, U)) : Either(A, U) forall T, U
-      Left(A, U).new @value
+    def bind(&block : B -> Either(T, U)) : Either(A | T, U) forall T, U
+      Left(A | T, U).new @value
     end
 
     def fold(a : A -> T, b : B -> T) : T forall T
@@ -109,8 +113,16 @@ abstract struct Either(A, B)
       Right(A, T).new block.call(@value)
     end
 
-    def bind(&block : B -> Either(T, U)) : Either(T, U) forall T, U
-      block.call @value
+    def bind(&block : B -> Either(T, U)) : Either(A | T, U) forall T, U
+      # FIXME: current compiler breaks when just casting as below.
+      # block.call(@value).as(Either(A | T, U))
+      # Rewrap in a new struct with the appropriate type until this works.
+      result = block.call @value
+      if result.is_a? Left
+        Either(A | T, U).left result.left_value
+      else
+        Either(A | T, U).right result.value!
+      end
     end
 
     def fold(a : A -> T, b : B -> T) : T forall T

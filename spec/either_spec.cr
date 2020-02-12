@@ -115,8 +115,8 @@ describe Either do
 
   describe "#bind" do
     context "when left" do
-      it "applies the right type associated with the block" do
-        left.bind { |_x| Either.unit("foo") }.should be_a(Either(String, String))
+      it "applies the type associated with the block" do
+        left.bind { |_x| Either(Int32, String).right("foo") }.should be_a(Either(Int32 | String, String))
       end
 
       it "bypasses execution of the block" do
@@ -125,8 +125,12 @@ describe Either do
     end
 
     context "when right" do
+      it "applies the type associated with the block" do
+        right.bind { |_x| Either(Int32, String).right("foo") }.should be_a(Either(Int32 | String, String))
+      end
+
       it "applies the passed block" do
-        right.bind { |x| Either.unit(x.to_f) }.value.should eq(right.value.to_f)
+        right.bind { |x| Either(Nil, Float64).right(x.to_f) }.value.should eq(right.value.to_f)
       end
     end
   end
